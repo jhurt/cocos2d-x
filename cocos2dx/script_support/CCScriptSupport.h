@@ -223,6 +223,8 @@ public:
     /** functions for execute touch event */
     virtual int executeLayerTouchesEvent(CCLayer* pLayer, int eventType, CCSet *pTouches) = 0;
     virtual int executeLayerTouchEvent(CCLayer* pLayer, int eventType, CCTouch *pTouch) = 0;
+
+    virtual int executeFunctionWithStringData(int nHandler, const char* data) = 0;
 };
 
 /**

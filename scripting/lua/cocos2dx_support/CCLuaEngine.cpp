@@ -499,6 +499,11 @@ int CCLuaEngine::executeFunctionByHandler(int nHandler, int numArgs)
     }
 }
 
+int CCLuaEngine::executeFunctionWithStringData(int nHandler, const char *data) {
+    lua_pushstring(m_state, data);
+    return executeFunctionByHandler(nHandler, 1);
+}
+
 int CCLuaEngine::pushInt(int data)
 {
     lua_pushinteger(m_state, data);
