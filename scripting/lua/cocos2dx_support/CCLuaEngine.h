@@ -216,6 +216,8 @@ public:
     int pushCCLuaValueDict(const CCLuaValueDict& dict);
     int pushCCLuaValueArray(const CCLuaValueArray& array);
     int executeFunctionByHandler(int nHandler, int numArgs);
+    int executeFunctionByTableIdAndHandler(int nTableId, int nHandler, int numArgs);
+
     void cleanStack(void);
     
     // Add lua loader, now it is used on android

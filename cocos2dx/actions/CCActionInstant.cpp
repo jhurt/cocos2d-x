@@ -391,6 +391,21 @@ CCCallFunc * CCCallFunc::create(int nHandler)
 	return pRet;
 }
 
+CCCallFunc * CCCallFunc::create(int nTableId, int nHandler)
+{
+    CCCallFunc *pRet = new CCCallFunc();
+    
+    if (pRet) {
+        pRet->m_nScriptHandler = nHandler;
+        pRet->m_nTableId = nTableId;
+        pRet->autorelease();
+    }
+    else{
+        CC_SAFE_DELETE(pRet);
+    }
+    return pRet;
+}
+
 bool CCCallFunc::initWithTarget(CCObject* pSelectorTarget) {
     if (pSelectorTarget) 
     {

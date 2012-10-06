@@ -217,6 +217,7 @@ public:
         : m_pSelectorTarget(NULL)
         , m_pCallFunc(NULL)
 		, m_nScriptHandler(0)
+        , m_nTableId(0)
     {
     }
     virtual ~CCCallFunc()
@@ -237,6 +238,7 @@ public:
 
 	/** creates the action with the handler script function */
 	static CCCallFunc * create(int nHandler);
+    static CCCallFunc * create(int nTableId, int nHandler);
 
 	/** initializes the action with the callback 
     
@@ -265,11 +267,14 @@ public:
     }
     
     inline int getScriptHandler() { return m_nScriptHandler; };
+    inline int getTableId() { return m_nTableId; };
+
 protected:
     /** Target that will be called */
     CCObject*   m_pSelectorTarget;
 
 	int m_nScriptHandler;
+    int m_nTableId;
 
     union
     {

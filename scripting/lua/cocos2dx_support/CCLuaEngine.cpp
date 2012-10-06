@@ -369,7 +369,15 @@ int CCLuaEngine::executeCallFuncActionEvent(CCCallFunc* pAction, CCObject* pTarg
         {
             pushNil();
         }
-        ret = executeFunctionByHandler(nScriptHandler, 1);
+        int tableId = pAction->getTableId();
+        if (tableId) 
+        {
+            ret = executeFunctionByTableIdAndHandler(tableId, nScriptHandler, 1);
+        }
+        else 
+        {
+            ret = executeFunctionByHandler(nScriptHandler, 1);
+        }    
     } while (0);
     return ret;
 }
@@ -468,6 +476,52 @@ int CCLuaEngine::executeFunctionByHandler(int nHandler, int numArgs)
         
         int error = 0;
         error = lua_pcall(m_state, numArgs, 1, traceback);              /* stack: ... ret */
+        if (error)
+        {
+            if (traceback == 0)
+            {
+                CCLOG("[LUA ERROR] %s", lua_tostring(m_state, - 1));    /* stack: ... error */
+                lua_pop(m_state, 1); // remove error message from stack
+            }
+            return 0;
+        }
+        
+        // get return value
+        int ret = 0;
+        if (lua_isnumber(m_state, -1))
+        {
+            ret = lua_tointeger(m_state, -1);
+        }
+        else if (lua_isboolean(m_state, -1))
+        {
+            ret = lua_toboolean(m_state, -1);
+        }
+        
+        lua_pop(m_state, 1); // remove return value from stack
+        return ret;
+    }
+    else
+    {
+        lua_pop(m_state, numArgs); // remove args from stack
+        return 0;
+    }
+}
+
+int CCLuaEngine::executeFunctionByTableIdAndHandler(int tableId, int nHandler, int numArgs)
+{
+    toluafix_stack_dump(lua_State* L, const char* label);
+    toluafix_get_table_by_refid(m_state, tableId);
+    if (pushFunction(nHandler))                                         /* stack: ... arg1 arg2 ... func */
+    {
+        lua_insert(m_state, -(numArgs + 2));
+        int traceback = 0;
+        lua_getglobal(m_state, "__G__TRACKBACK__");                     /* stack: ... func arg1 arg2 ... G */
+        if (!lua_isfunction(m_state, -1))
+        {
+            lua_pop(m_state, 1);                                        /* stack: ... func arg1 arg2 ... */
+        }
+        int error = 0;
+        error = lua_pcall(m_state, numArgs+1, 1, traceback);              /* stack: ... ret */
         if (error)
         {
             if (traceback == 0)
