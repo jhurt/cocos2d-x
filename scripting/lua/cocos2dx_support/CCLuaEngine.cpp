@@ -509,7 +509,6 @@ int CCLuaEngine::executeFunctionByHandler(int nHandler, int numArgs)
 
 int CCLuaEngine::executeFunctionByTableIdAndHandler(int tableId, int nHandler, int numArgs)
 {
-    toluafix_stack_dump(lua_State* L, const char* label);
     toluafix_get_table_by_refid(m_state, tableId);
     if (pushFunction(nHandler))                                         /* stack: ... arg1 arg2 ... func */
     {
