@@ -162,6 +162,15 @@ CCSprite* CCSprite::createWithSpriteFrameName(const char *pszSpriteFrameName)
     return createWithSpriteFrame(pFrame);
 }
 
+CCSprite* CCSprite::createWithSpriteFrameName(const char *pszSpriteFrameName, bool background)
+{
+    CCSprite *ret = createWithSpriteFrameName(pszSpriteFrameName);
+    if(background) {
+        ret->setBlendFunc( (ccBlendFunc){GL_ONE, GL_ZERO});
+    }
+    return ret;
+}
+
 CCSprite* CCSprite::node()
 {
     return CCSprite::create();
@@ -287,7 +296,6 @@ bool CCSprite::initWithSpriteFrame(CCSpriteFrame *pSpriteFrame)
 
     bool bRet = initWithTexture(pSpriteFrame->getTexture(), pSpriteFrame->getRect());
     setDisplayFrame(pSpriteFrame);
-
     return bRet;
 }
 

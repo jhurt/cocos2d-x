@@ -171,6 +171,7 @@ public:
      @since v0.9
      */
     static CCSprite* createWithSpriteFrameName(const char *pszSpriteFrameName);
+    static CCSprite* createWithSpriteFrameName(const char *pszSpriteFrameName, bool background);
 
     /** Creates an sprite with an image filename.
      The rect used will be the size of the image.
