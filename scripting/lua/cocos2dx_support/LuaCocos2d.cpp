@@ -27009,7 +27009,7 @@ static int tolua_Cocos2d_CCRepeatForever_create00(lua_State* tolua_S)
  tolua_Error tolua_err;
  if (
      !tolua_isusertable(tolua_S,1,"CCRepeatForever",0,&tolua_err) ||
-     !tolua_isusertype(tolua_S,2,"CCActionInterval",0,&tolua_err) ||
+     !(tolua_isusertype(tolua_S,2,"CCActionInterval",0,&tolua_err) || tolua_isusertype(tolua_S,2,"CCFiniteTimeAction",0,&tolua_err)) ||
      !tolua_isnoobj(tolua_S,3,&tolua_err)
  )
   goto tolua_lerror;
