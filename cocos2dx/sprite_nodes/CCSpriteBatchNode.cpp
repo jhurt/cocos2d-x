@@ -154,6 +154,8 @@ void CCSpriteBatchNode::visit(void)
         transformAncestors();
     }
 
+    sortAllChildren();
+    transform();
 
     draw();
 
@@ -180,9 +182,6 @@ void CCSpriteBatchNode::addChild(CCNode *child, int zOrder, int tag)
     CCNode::addChild(child, zOrder, tag);
 
     appendChild(pSprite);
-    sortAllChildren();
-    transform();
-
 }
 
 void CCSpriteBatchNode::addChild(CCNode *child)
