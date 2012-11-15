@@ -1,35 +1,17 @@
 /*
 ** Lua binding: Cocos2d
-** Generated automatically by tolua++-1.0.92 on Tue Sep 25 16:42:45 2012.
+** Generated automatically by tolua++-1.0.92 on 10/30/12 10:32:25.
 */
 
-/****************************************************************************
- Copyright (c) 2011 cocos2d-x.org
+#ifndef __cplusplus
+#include "stdlib.h"
+#endif
+#include "string.h"
 
- http://www.cocos2d-x.org
+#include "tolua++.h"
 
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
-
- The above copyright notice and this permission notice shall be included in
- all copies or substantial portions of the Software.
-
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- THE SOFTWARE.
- ****************************************************************************/
-
-
-
-
+/* Exported function */
+TOLUA_API int  tolua_Cocos2d_open (lua_State* tolua_S);
 
 #include "LuaCocos2d.h"
 
@@ -8553,38 +8535,6 @@ static int tolua_Cocos2d_ccpIntersectPoint00(lua_State* tolua_S)
 }
 #endif //#ifndef TOLUA_DISABLE
 
-/* method: getSize of class  CCEGLViewProtocol */
-#ifndef TOLUA_DISABLE_tolua_Cocos2d_CCEGLViewProtocol_getSize00
-static int tolua_Cocos2d_CCEGLViewProtocol_getSize00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
-     !tolua_isusertype(tolua_S,1,"const CCEGLViewProtocol",0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,2,&tolua_err)
- )
-  goto tolua_lerror;
- else
-#endif
- {
-  const CCEGLViewProtocol* self = (const CCEGLViewProtocol*)  tolua_tousertype(tolua_S,1,0);
-#ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getSize'", NULL);
-#endif
-  {
-   const CCSize& tolua_ret = (const CCSize&)  self->getSize();
-    tolua_pushusertype(tolua_S,(void*)&tolua_ret,"const CCSize");
-  }
- }
- return 1;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'getSize'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
 /* method: getFrameSize of class  CCEGLViewProtocol */
 #ifndef TOLUA_DISABLE_tolua_Cocos2d_CCEGLViewProtocol_getFrameSize00
 static int tolua_Cocos2d_CCEGLViewProtocol_getFrameSize00(lua_State* tolua_S)
@@ -8773,6 +8723,38 @@ static int tolua_Cocos2d_CCEGLViewProtocol_setDesignResolutionSize00(lua_State* 
 }
 #endif //#ifndef TOLUA_DISABLE
 
+/* method: getDesignResolutionSize of class  CCEGLViewProtocol */
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_CCEGLViewProtocol_getDesignResolutionSize00
+static int tolua_Cocos2d_CCEGLViewProtocol_getDesignResolutionSize00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"const CCEGLViewProtocol",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  const CCEGLViewProtocol* self = (const CCEGLViewProtocol*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getDesignResolutionSize'", NULL);
+#endif
+  {
+   const CCSize& tolua_ret = (const CCSize&)  self->getDesignResolutionSize();
+    tolua_pushusertype(tolua_S,(void*)&tolua_ret,"const CCSize");
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getDesignResolutionSize'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
 /* method: setTouchDelegate of class  CCEGLViewProtocol */
 #ifndef TOLUA_DISABLE_tolua_Cocos2d_CCEGLViewProtocol_setTouchDelegate00
 static int tolua_Cocos2d_CCEGLViewProtocol_setTouchDelegate00(lua_State* tolua_S)
@@ -8801,40 +8783,6 @@ static int tolua_Cocos2d_CCEGLViewProtocol_setTouchDelegate00(lua_State* tolua_S
 #ifndef TOLUA_RELEASE
  tolua_lerror:
  tolua_error(tolua_S,"#ferror in function 'setTouchDelegate'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* method: setContentScaleFactor of class  CCEGLViewProtocol */
-#ifndef TOLUA_DISABLE_tolua_Cocos2d_CCEGLViewProtocol_setContentScaleFactor00
-static int tolua_Cocos2d_CCEGLViewProtocol_setContentScaleFactor00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
-     !tolua_isusertype(tolua_S,1,"CCEGLViewProtocol",0,&tolua_err) ||
-     !tolua_isnumber(tolua_S,2,0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,3,&tolua_err)
- )
-  goto tolua_lerror;
- else
-#endif
- {
-  CCEGLViewProtocol* self = (CCEGLViewProtocol*)  tolua_tousertype(tolua_S,1,0);
-  float contentScaleFactor = ((float)  tolua_tonumber(tolua_S,2,0));
-#ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'setContentScaleFactor'", NULL);
-#endif
-  {
-   bool tolua_ret = (bool)  self->setContentScaleFactor(contentScaleFactor);
-   tolua_pushboolean(tolua_S,(bool)tolua_ret);
-  }
- }
- return 1;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'setContentScaleFactor'.",&tolua_err);
  return 0;
 #endif
 }
@@ -9009,38 +8957,6 @@ static int tolua_Cocos2d_CCEGLViewProtocol_getScaleY00(lua_State* tolua_S)
 #ifndef TOLUA_RELEASE
  tolua_lerror:
  tolua_error(tolua_S,"#ferror in function 'getScaleY'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* method: isRetinaEnabled of class  CCEGLViewProtocol */
-#ifndef TOLUA_DISABLE_tolua_Cocos2d_CCEGLViewProtocol_isRetinaEnabled00
-static int tolua_Cocos2d_CCEGLViewProtocol_isRetinaEnabled00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
-     !tolua_isusertype(tolua_S,1,"const CCEGLViewProtocol",0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,2,&tolua_err)
- )
-  goto tolua_lerror;
- else
-#endif
- {
-  const CCEGLViewProtocol* self = (const CCEGLViewProtocol*)  tolua_tousertype(tolua_S,1,0);
-#ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'isRetinaEnabled'", NULL);
-#endif
-  {
-   bool tolua_ret = (bool)  self->isRetinaEnabled();
-   tolua_pushboolean(tolua_S,(bool)tolua_ret);
-  }
- }
- return 1;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'isRetinaEnabled'.",&tolua_err);
  return 0;
 #endif
 }
@@ -10763,40 +10679,6 @@ static int tolua_Cocos2d_CCDirector_getOpenGLView00(lua_State* tolua_S)
 #ifndef TOLUA_RELEASE
  tolua_lerror:
  tolua_error(tolua_S,"#ferror in function 'getOpenGLView'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* method: enableRetinaDisplay of class  CCDirector */
-#ifndef TOLUA_DISABLE_tolua_Cocos2d_CCDirector_enableRetinaDisplay00
-static int tolua_Cocos2d_CCDirector_enableRetinaDisplay00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
-     !tolua_isusertype(tolua_S,1,"CCDirector",0,&tolua_err) ||
-     !tolua_isboolean(tolua_S,2,0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,3,&tolua_err)
- )
-  goto tolua_lerror;
- else
-#endif
- {
-  CCDirector* self = (CCDirector*)  tolua_tousertype(tolua_S,1,0);
-  bool bEnableRetina = ((bool)  tolua_toboolean(tolua_S,2,0));
-#ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'enableRetinaDisplay'", NULL);
-#endif
-  {
-   bool tolua_ret = (bool)  self->enableRetinaDisplay(bEnableRetina);
-   tolua_pushboolean(tolua_S,(bool)tolua_ret);
-  }
- }
- return 1;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'enableRetinaDisplay'.",&tolua_err);
  return 0;
 #endif
 }
@@ -20569,41 +20451,6 @@ static int tolua_Cocos2d_CCSprite_createWithSpriteFrameName00(lua_State* tolua_S
 }
 #endif //#ifndef TOLUA_DISABLE
 
-/* method: createWithSpriteFrameName of class  CCSprite */
-#ifndef TOLUA_DISABLE_tolua_Cocos2d_CCSprite_createWithSpriteFrameName01
-static int tolua_Cocos2d_CCSprite_createWithSpriteFrameName01(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
-    tolua_Error tolua_err;
-    if (
-        !tolua_isusertable(tolua_S,1,"CCSprite",0,&tolua_err) ||
-        !tolua_isstring(tolua_S,2,0,&tolua_err) ||
-        !tolua_isboolean(tolua_S,3,0,&tolua_err) ||
-        !tolua_isnoobj(tolua_S,4,&tolua_err)
-        )
-        goto tolua_lerror;
-    else
-#endif
-    {
-        const char* pszSpriteFrameName = ((const char*)  tolua_tostring(tolua_S,2,0));
-        bool background = tolua_toboolean(tolua_S, 3, 0);
-        {
-            CCSprite* tolua_ret = (CCSprite*)  CCSprite::createWithSpriteFrameName(pszSpriteFrameName, background);
-            int nID = (tolua_ret) ? (int)tolua_ret->m_uID : -1;
-            int* pLuaID = (tolua_ret) ? &tolua_ret->m_nLuaID : NULL;
-            toluafix_pushusertype_ccobject(tolua_S, nID, pLuaID, (void*)tolua_ret,"CCSprite");
-        }
-    }
-    return 1;
-#ifndef TOLUA_RELEASE
-tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'createWithSpriteFrameName'.",&tolua_err);
-    return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
-
 /* method: create of class  CCSprite */
 #ifndef TOLUA_DISABLE_tolua_Cocos2d_CCSprite_create00
 static int tolua_Cocos2d_CCSprite_create00(lua_State* tolua_S)
@@ -30170,40 +30017,6 @@ static int tolua_Cocos2d_CCCallFunc_create00(lua_State* tolua_S)
  tolua_lerror:
  tolua_error(tolua_S,"#ferror in function 'create'.",&tolua_err);
  return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* method: create of class  CCCallFunc */
-#ifndef TOLUA_DISABLE_tolua_Cocos2d_CCCallFunc_create01
-static int tolua_Cocos2d_CCCallFunc_create01(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
-    tolua_Error tolua_err;
-    if (
-        !tolua_isusertable(tolua_S,1,"CCCallFunc",0,&tolua_err) ||
-        (tolua_isvaluenil(tolua_S,2,&tolua_err) || !toluafix_istable(tolua_S,2,"LUA_TABLE",0,&tolua_err)) ||
-        (tolua_isvaluenil(tolua_S,3,&tolua_err) || !toluafix_isfunction(tolua_S,3,"LUA_FUNCTION",0,&tolua_err)) ||
-        !tolua_isnoobj(tolua_S,4,&tolua_err)
-        )
-        goto tolua_lerror;
-    else
-#endif
-    {
-        LUA_TABLE tableId = toluafix_ref_table(tolua_S, 2, 0);
-        LUA_FUNCTION funcID = (  toluafix_ref_function(tolua_S,3,0));
-        {
-            CCCallFunc* tolua_ret = (CCCallFunc*)  CCCallFunc::create(tableId, funcID);
-            int nID = (tolua_ret) ? (int)tolua_ret->m_uID : -1;
-            int* pLuaID = (tolua_ret) ? &tolua_ret->m_nLuaID : NULL;
-            toluafix_pushusertype_ccobject(tolua_S, nID, pLuaID, (void*)tolua_ret,"CCCallFunc");
-        }
-    }
-    return 1;
-#ifndef TOLUA_RELEASE
-tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'create'.",&tolua_err);
-    return 0;
 #endif
 }
 #endif //#ifndef TOLUA_DISABLE
@@ -55655,20 +55468,18 @@ TOLUA_API int tolua_Cocos2d_open (lua_State* tolua_S)
   tolua_constant(tolua_S,"kResolutionUnKnown",kResolutionUnKnown);
   tolua_cclass(tolua_S,"CCEGLViewProtocol","CCEGLViewProtocol","",NULL);
   tolua_beginmodule(tolua_S,"CCEGLViewProtocol");
-   tolua_function(tolua_S,"getSize",tolua_Cocos2d_CCEGLViewProtocol_getSize00);
    tolua_function(tolua_S,"getFrameSize",tolua_Cocos2d_CCEGLViewProtocol_getFrameSize00);
    tolua_function(tolua_S,"setFrameSize",tolua_Cocos2d_CCEGLViewProtocol_setFrameSize00);
    tolua_function(tolua_S,"getVisibleSize",tolua_Cocos2d_CCEGLViewProtocol_getVisibleSize00);
    tolua_function(tolua_S,"getVisibleOrigin",tolua_Cocos2d_CCEGLViewProtocol_getVisibleOrigin00);
    tolua_function(tolua_S,"setDesignResolutionSize",tolua_Cocos2d_CCEGLViewProtocol_setDesignResolutionSize00);
+   tolua_function(tolua_S,"getDesignResolutionSize",tolua_Cocos2d_CCEGLViewProtocol_getDesignResolutionSize00);
    tolua_function(tolua_S,"setTouchDelegate",tolua_Cocos2d_CCEGLViewProtocol_setTouchDelegate00);
-   tolua_function(tolua_S,"setContentScaleFactor",tolua_Cocos2d_CCEGLViewProtocol_setContentScaleFactor00);
    tolua_function(tolua_S,"setViewPortInPoints",tolua_Cocos2d_CCEGLViewProtocol_setViewPortInPoints00);
    tolua_function(tolua_S,"setScissorInPoints",tolua_Cocos2d_CCEGLViewProtocol_setScissorInPoints00);
    tolua_function(tolua_S,"getViewPortRect",tolua_Cocos2d_CCEGLViewProtocol_getViewPortRect00);
    tolua_function(tolua_S,"getScaleX",tolua_Cocos2d_CCEGLViewProtocol_getScaleX00);
    tolua_function(tolua_S,"getScaleY",tolua_Cocos2d_CCEGLViewProtocol_getScaleY00);
-   tolua_function(tolua_S,"isRetinaEnabled",tolua_Cocos2d_CCEGLViewProtocol_isRetinaEnabled00);
   tolua_endmodule(tolua_S);
   tolua_cclass(tolua_S,"CCFileUtils","CCFileUtils","",NULL);
   tolua_beginmodule(tolua_S,"CCFileUtils");
@@ -55753,7 +55564,6 @@ TOLUA_API int tolua_Cocos2d_open (lua_State* tolua_S)
    tolua_function(tolua_S,"isPaused",tolua_Cocos2d_CCDirector_isPaused00);
    tolua_function(tolua_S,"getTotalFrames",tolua_Cocos2d_CCDirector_getTotalFrames00);
    tolua_function(tolua_S,"getOpenGLView",tolua_Cocos2d_CCDirector_getOpenGLView00);
-   tolua_function(tolua_S,"enableRetinaDisplay",tolua_Cocos2d_CCDirector_enableRetinaDisplay00);
    tolua_function(tolua_S,"getWinSize",tolua_Cocos2d_CCDirector_getWinSize00);
    tolua_function(tolua_S,"getWinSizeInPixels",tolua_Cocos2d_CCDirector_getWinSizeInPixels00);
    tolua_function(tolua_S,"convertToGL",tolua_Cocos2d_CCDirector_convertToGL00);
@@ -56101,7 +55911,6 @@ TOLUA_API int tolua_Cocos2d_open (lua_State* tolua_S)
    tolua_function(tolua_S,"createWithTexture",tolua_Cocos2d_CCSprite_createWithTexture01);
    tolua_function(tolua_S,"createWithSpriteFrame",tolua_Cocos2d_CCSprite_createWithSpriteFrame00);
    tolua_function(tolua_S,"createWithSpriteFrameName",tolua_Cocos2d_CCSprite_createWithSpriteFrameName00);
-   tolua_function(tolua_S,"createWithSpriteFrameNameIsBackgroud",tolua_Cocos2d_CCSprite_createWithSpriteFrameName01);
    tolua_function(tolua_S,"create",tolua_Cocos2d_CCSprite_create00);
    tolua_function(tolua_S,"create",tolua_Cocos2d_CCSprite_create01);
    tolua_function(tolua_S,"create",tolua_Cocos2d_CCSprite_create02);
@@ -56653,7 +56462,6 @@ TOLUA_API int tolua_Cocos2d_open (lua_State* tolua_S)
   tolua_cclass(tolua_S,"CCCallFunc","CCCallFunc","CCActionInstant",NULL);
   tolua_beginmodule(tolua_S,"CCCallFunc");
    tolua_function(tolua_S,"create",tolua_Cocos2d_CCCallFunc_create00);
-   tolua_function(tolua_S,"createWithTable",tolua_Cocos2d_CCCallFunc_create01);
   tolua_endmodule(tolua_S);
   tolua_cclass(tolua_S,"CCCallFuncN","CCCallFuncN","CCCallFunc",NULL);
   tolua_beginmodule(tolua_S,"CCCallFuncN");
@@ -57782,4 +57590,3 @@ TOLUA_API int tolua_Cocos2d_open (lua_State* tolua_S)
  return tolua_Cocos2d_open(tolua_S);
 };
 #endif
-

@@ -29,6 +29,7 @@ int main(int argc, char **argv)
     AppDelegate app;
     CCApplication::sharedApplication()->setResourceRootPath(resourcePath.c_str());
     CCEGLView* eglView = CCEGLView::sharedOpenGLView();
-    eglView->setFrameSize(960, 640);
+    eglView->setFrameSize(480, 320);
+
     return CCApplication::sharedApplication()->run();
 }

@@ -736,6 +736,21 @@ CCLabelBMFont * CCLabelBMFont::create()
     return NULL;
 }
 
+CCLabelBMFont * CCLabelBMFont::create(const char *str, const char *fntFile, float width, CCTextAlignment alignment)
+{
+    return CCLabelBMFont::create(str, fntFile, width, alignment, CCPointZero);
+}
+
+CCLabelBMFont * CCLabelBMFont::create(const char *str, const char *fntFile, float width)
+{
+    return CCLabelBMFont::create(str, fntFile, width, kCCTextAlignmentLeft, CCPointZero);
+}
+
+CCLabelBMFont * CCLabelBMFont::create(const char *str, const char *fntFile)
+{
+    return CCLabelBMFont::create(str, fntFile, kCCLabelAutomaticWidth, kCCTextAlignmentLeft, CCPointZero);
+}
+
 CCLabelBMFont *CCLabelBMFont::labelWithString(const char *str, const char *fntFile, float width/* = kCCLabelAutomaticWidth*/, CCTextAlignment alignment/* = kCCTextAlignmentLeft*/, CCPoint imageOffset/* = CCPointZero*/)
 {
     return CCLabelBMFont::create(str, fntFile, width, alignment, imageOffset);
@@ -961,8 +976,14 @@ void CCLabelBMFont::setString(const char *newString, bool fromUpdate)
 {
     CC_SAFE_DELETE_ARRAY(m_sString);
     m_sString = cc_utf16_from_utf8(newString);
-    m_sInitialString = newString;
 
+    // MARMALADE CHANGE
+    // THE ASSIGMENT OF STRINGS BELOW PERFORMS AN OVERLAPPING MEMCPY, WHEN fromUpdate IS TRUE
+    // ADDED THE "IF" LINE TO AVOID THIS
+    if (strcmp(m_sInitialString.c_str(), newString))
+	{
+        m_sInitialString = newString;
+	}
     updateString(fromUpdate);
 }
 
