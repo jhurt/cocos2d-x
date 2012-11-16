@@ -56496,11 +56496,11 @@ TOLUA_API int tolua_Cocos2d_open (lua_State* tolua_S)
   tolua_cclass(tolua_S,"CCCallFunc","CCCallFunc","CCActionInstant",NULL);
   tolua_beginmodule(tolua_S,"CCCallFunc");
    tolua_function(tolua_S,"create",tolua_Cocos2d_CCCallFunc_create00);
+   tolua_function(tolua_S,"createWithTable",tolua_Cocos2d_CCCallFunc_create01);
   tolua_endmodule(tolua_S);
   tolua_cclass(tolua_S,"CCCallFuncN","CCCallFuncN","CCCallFunc",NULL);
   tolua_beginmodule(tolua_S,"CCCallFuncN");
    tolua_function(tolua_S,"create",tolua_Cocos2d_CCCallFuncN_create00);
-   tolua_function(tolua_S,"createWithTable",tolua_Cocos2d_CCCallFunc_create01);
   tolua_endmodule(tolua_S);
   tolua_cclass(tolua_S,"CCActionCamera","CCActionCamera","CCActionInterval",NULL);
   tolua_beginmodule(tolua_S,"CCActionCamera");

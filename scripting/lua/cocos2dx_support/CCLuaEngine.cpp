@@ -31,6 +31,8 @@ extern "C" {
 #include "tolua_fix.h"
 }
 
+#include "LuaPP.h"
+
 #include "cocos2d.h"
 #include "LuaCocos2d.h"
 #include "cocoa/CCArray.h"
@@ -208,6 +210,7 @@ bool CCLuaEngine::init(void)
     m_state = lua_open();
     luaL_openlibs(m_state);
     tolua_Cocos2d_open(m_state);
+    tolua_PP_open(m_state);
     toluafix_open(m_state);
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
     addLuaLoader(loader_Android);
