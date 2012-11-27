@@ -197,7 +197,9 @@ const char* CCFileUtils::fullPathFromRelativePath(const char *pszRelativePath)
         
         NSString *imageDirectory = [relPath stringByDeletingLastPathComponent];
         NSMutableString *imageDirectoryByAppendDirectory = [NSMutableString stringWithUTF8String:m_obDirectory.c_str()];
-        [imageDirectoryByAppendDirectory appendString:imageDirectory];
+        if(imageDirectory) {
+            [imageDirectoryByAppendDirectory appendString:imageDirectory];
+        }
         
         // search path from directory set by setResourceDirectory
         fullpath = [[NSBundle mainBundle] pathForResource:lastPathComponent
