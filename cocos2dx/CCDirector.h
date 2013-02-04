@@ -217,6 +217,8 @@ public:
      */
     void popScene(void);
 
+    void popSceneTransitionSlideInT(float time);
+
     /**Pops out all scenes from the queue until the root scene in the queue.
      * This scene will replace the running one.
      * The running scene will be deleted. If there are no more scenes in the stack the execution is terminated.
