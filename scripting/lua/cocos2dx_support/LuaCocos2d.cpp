@@ -11051,9 +11051,27 @@ static int tolua_Cocos2d_CCDirector_popScene01(lua_State* tolua_S)
 {
     CCDirector* self = (CCDirector*)  tolua_tousertype(tolua_S,1,0);
     float time = (float) tolua_tonumber(tolua_S,2,0);
-    {
-        self->popSceneTransitionSlideInT(time);
-    }
+    self->popSceneTransitionSlideInT(time);
+    return 0;
+}
+#endif //#ifndef TOLUA_DISABLE
+
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_CCDirector_popScene02
+static int tolua_Cocos2d_CCDirector_popScene02(lua_State* tolua_S)
+{
+    CCDirector* self = (CCDirector*)  tolua_tousertype(tolua_S,1,0);
+    float time = (float) tolua_tonumber(tolua_S,2,0);
+    self->popSceneTransitionFade(time);
+    return 0;
+}
+#endif //#ifndef TOLUA_DISABLE
+
+#ifndef TOLUA_DISABLE_tolua_Cocos2d_CCDirector_popScene03
+static int tolua_Cocos2d_CCDirector_popScene03(lua_State* tolua_S)
+{
+    CCDirector* self = (CCDirector*)  tolua_tousertype(tolua_S,1,0);
+    float time = (float) tolua_tonumber(tolua_S,2,0);
+    self->popSceneTransitionCrossFade(time);
     return 0;
 }
 #endif //#ifndef TOLUA_DISABLE
@@ -55621,6 +55639,8 @@ TOLUA_API int tolua_Cocos2d_open (lua_State* tolua_S)
    tolua_function(tolua_S,"pushScene",tolua_Cocos2d_CCDirector_pushScene00);
    tolua_function(tolua_S,"popScene",tolua_Cocos2d_CCDirector_popScene00);
    tolua_function(tolua_S,"popSceneTransitionSlideInT",tolua_Cocos2d_CCDirector_popScene01);
+   tolua_function(tolua_S,"popSceneTransitionFade",tolua_Cocos2d_CCDirector_popScene02);
+   tolua_function(tolua_S,"popSceneTransitionCrossFade",tolua_Cocos2d_CCDirector_popScene03);
    tolua_function(tolua_S,"replaceScene",tolua_Cocos2d_CCDirector_replaceScene00);
    tolua_function(tolua_S,"endToLua",tolua_Cocos2d_CCDirector_endToLua00);
    tolua_function(tolua_S,"getContentScaleFactor",tolua_Cocos2d_CCDirector_getContentScaleFactor00);
