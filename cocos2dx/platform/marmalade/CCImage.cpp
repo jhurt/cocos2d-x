@@ -24,7 +24,7 @@
 #include <vector>
 #include <string>
 #include <sstream> 
-
+#include <algorithm>
 #include "CCImage.h"
 #include "CCCommon.h"
 #include "CCStdC.h"
@@ -383,7 +383,7 @@ bool BitmapDC::getBitmap( const char *text, int nWidth, int nHeight, CCImage::ET
 				if (iError) { //no valid font found, try to use default
 					
 					fName = "fonts/Marker Felt.ttf" ;
-					//CCLog("No valid font, use default %s\n", fName.c_str());
+					//CCLog("No valid font, use default %s", fName.c_str());
 					iError = openFont( fName, fontSize );
 				}
 			}
@@ -522,7 +522,7 @@ bool CCImage::initWithImageFile(const char * strPath, EImageFormat eImgFmt/* = e
 	IW_CALLSTACK("UIImage::initWithImageFile");
     bool bRet = false;
     unsigned long nSize = 0;
-    unsigned char* pBuffer = CCFileUtils::sharedFileUtils()->getFileData(CCFileUtils::sharedFileUtils()->fullPathFromRelativePath(strPath), "rb", &nSize);
+    unsigned char* pBuffer = CCFileUtils::sharedFileUtils()->getFileData(strPath, "rb", &nSize);
     if (pBuffer != NULL && nSize > 0)
     {
         bRet = initWithImageData(pBuffer, nSize, eImgFmt);
@@ -555,8 +555,8 @@ bool CCImage::initWithImageData(void * pData,
     bool bRet = false;
     do 
     {
-        CC_BREAK_IF(! pData || nDataLen <= 0);
-
+    	CC_BREAK_IF(! pData || nDataLen <= 0);
+		
         if (kFmtPng == eFmt)
         {
             bRet = _initWithPngData(pData, nDataLen);
@@ -570,6 +570,11 @@ bool CCImage::initWithImageData(void * pData,
         else if (kFmtTiff == eFmt)
         {
             bRet = _initWithTiffData(pData, nDataLen);
+            break;
+        }
+        else if (kFmtWebp == eFmt)
+        {
+            bRet = _initWithWebpData(pData, nDataLen);
             break;
         }
         else if (kFmtRawData == eFmt)
@@ -622,7 +627,7 @@ bool CCImage::initWithImageData(void * pData,
                 }
             }
         }
-    } while (0);
+	} while (0);
     return bRet;
 }
 
@@ -630,99 +635,84 @@ bool CCImage::_initWithJpgData(void * data, int nSize)
 {	
 	IW_CALLSTACK("CCImage::_initWithJpgData");
 
-	bool bRet = false;
+    /* these are standard libjpeg structures for reading(decompression) */
+    struct jpeg_decompress_struct cinfo;
+    struct jpeg_error_mgr jerr;
+    /* libjpeg data structure for storing one row, that is, scanline of an image */
+    JSAMPROW row_pointer[1] = {0};
+    unsigned long location = 0;
+    unsigned int i = 0;
 
-	s3eFile* pFile = s3eFileOpenFromMemory(data, nSize);
-
-	IwAssert(GAME, pFile);
-
-    jpeg_decompress_struct cinfo;
-    bzero(&cinfo, sizeof(cinfo));
-
-    JSAMPARRAY buffer;      /* Output row buffer */
-    int row_stride;     /* physical row width in output buffer */
-
-    jpeg_source_mgr srcmgr;
-
-    srcmgr.bytes_in_buffer = nSize;
-    srcmgr.next_input_byte = (JOCTET*) data;
-    srcmgr.init_source = CCImageHelper::JPEGInitSource;
-    srcmgr.fill_input_buffer = CCImageHelper::JPEGFillInputBuffer;
-    srcmgr.skip_input_data = CCImageHelper::JPEGSkipInputData;
-    srcmgr.resync_to_restart = jpeg_resync_to_restart;
-    srcmgr.term_source = CCImageHelper::JPEGTermSource;
-
-    jpeg_error_mgr jerr;
-    cinfo.err = jpeg_std_error(&jerr);
-
-    jpeg_create_decompress(&cinfo);
-    cinfo.src = &srcmgr;
-
-    jpeg_read_header(&cinfo, TRUE);
-    jpeg_start_decompress(&cinfo);
-
-    /* JSAMPLEs per row in output buffer */
-    row_stride = cinfo.output_width * cinfo.output_components;
-
-    /* Make a one-row-high sample array that will go away when done with image */
-    buffer = (*cinfo.mem->alloc_sarray)
-        ((j_common_ptr) &cinfo, JPOOL_IMAGE, row_stride, 1);
-
-    int copy_rows  = (int)cinfo.output_height;
-    int copy_width = (int)cinfo.output_width;
-
-   if (copy_width < 0 || copy_rows < 0)
+    bool bRet = false;
+    do 
     {
-        printf("jpeg is fully off screen\n");
-        return bRet;
-    }
-	int startx=0;
-	int starty=0;
-	int bytesPerPix = 4;
-	m_pData = new unsigned char[copy_rows * copy_width * bytesPerPix];
-	memset(m_pData,0, copy_rows * copy_width * bytesPerPix);
-	// init image info
-	m_bPreMulti	= false;
-	m_bHasAlpha = false;
-	m_nHeight = copy_rows;
-	m_nWidth = copy_width;
-	m_nBitsPerComponent = bytesPerPix;
-	unsigned char *dst = m_pData;
-	unsigned char *pData = m_pData;
+        /* here we set up the standard libjpeg error handler */
+        cinfo.err = jpeg_std_error( &jerr );
 
-    while (cinfo.output_scanline < cinfo.output_height)// count through the image
-    {
-        /* jpeg_read_scanlines expects an array of pointers to scanlines.
-         * Here the array is only one element long, but you could ask for
-         * more than one scanline at a time if that's more convenient.
-         */
-        (void) jpeg_read_scanlines(&cinfo, buffer, 1);
+        /* setup decompression process and source, then read JPEG header */
+        jpeg_create_decompress( &cinfo );
 
-        if (starty-- <= 0)// count down from start
-        {
-            if (copy_rows-- > 0)
+	    jpeg_source_mgr srcmgr;
+
+		srcmgr.bytes_in_buffer = nSize;
+		srcmgr.next_input_byte = (JOCTET*) data;
+		srcmgr.init_source = CCImageHelper::JPEGInitSource;
+		srcmgr.fill_input_buffer = CCImageHelper::JPEGFillInputBuffer;
+		srcmgr.skip_input_data = CCImageHelper::JPEGSkipInputData;
+		srcmgr.resync_to_restart = jpeg_resync_to_restart;
+		srcmgr.term_source = CCImageHelper::JPEGTermSource;
+		cinfo.src = &srcmgr;
+//      jpeg_mem_src( &cinfo, (unsigned char *) data, nSize );
+
+        /* reading the image header which contains image information */
+        jpeg_read_header( &cinfo, true );
+
+        // we only support RGB or grayscale
+        if (cinfo.jpeg_color_space != JCS_RGB)
+		{
+            if (cinfo.jpeg_color_space == JCS_GRAYSCALE || cinfo.jpeg_color_space == JCS_YCbCr)
             {
-                for (int xx=startx; xx < copy_width; xx++)
-                {
-                    uint8 r = buffer[0][xx*3+0];
-                    uint8 b = buffer[0][xx*3+1];
-                    uint8 g = buffer[0][xx*3+2];
-
-					*dst++ = r;
-					*dst++ = b;
-					*dst++ = g;
-					*dst++ = 255;
-                }
-            }
+                cinfo.out_color_space = JCS_RGB;
+		    }
         }
-    }
+        else
+        {
+            break;
+        }
 
-    (void) jpeg_finish_decompress(&cinfo);
-    jpeg_destroy_decompress(&cinfo);
+        /* Start decompression jpeg here */
+        jpeg_start_decompress( &cinfo );
 
-    printf("jpeg display done\n");
+        /* init image info */
+        m_nWidth  = (short)(cinfo.image_width);
+        m_nHeight = (short)(cinfo.image_height);
+		m_bHasAlpha = false;
+        m_bPreMulti = false;
+        m_nBitsPerComponent = 8;
+        row_pointer[0] = new unsigned char[cinfo.output_width*cinfo.output_components];
+        CC_BREAK_IF(! row_pointer[0]);
 
-	bRet = true;
+        m_pData = new unsigned char[cinfo.output_width*cinfo.output_height*cinfo.output_components];
+        CC_BREAK_IF(! m_pData);
+
+        /* now actually read the jpeg into the raw buffer */
+        /* read one scan line at a time */
+        while( cinfo.output_scanline < cinfo.image_height )
+		{
+            jpeg_read_scanlines( &cinfo, row_pointer, 1 );
+            for( i=0; i<cinfo.image_width*cinfo.output_components;i++) 
+            {
+                m_pData[location++] = row_pointer[0][i];
+			}
+		}
+
+        jpeg_finish_decompress( &cinfo );
+		jpeg_destroy_decompress(&cinfo);
+        /* wrap up decompression, destroy objects, free pointers and close open files */        
+		bRet = true;
+    } while (0);
+
+    CC_SAFE_DELETE_ARRAY(row_pointer[0]);
 	return bRet;
 }
 
@@ -878,10 +868,15 @@ bool CCImage::initWithString(
 
 		BitmapDC &dc = sharedBitmapDC();
 
-//		const char* pFullFontName = CCFileUtils::fullPathFromRelativePath(pFontName);						// MH: Cocos2d 2.0.3 no longer supports the statsic method CCFileUtils::fullPathFromRelativePath
-		const char* pFullFontName = CCFileUtils::sharedFileUtils()->fullPathFromRelativePath(pFontName);	// MB: Cocos2d 2.0.3 seems to now use CCFileUtils::sharedFileUtils()->fullPathFromRelativePath
+        std::string fullFontName = pFontName;
+    	std::string lowerCasePath = fullFontName;
+    	std::transform(lowerCasePath.begin(), lowerCasePath.end(), lowerCasePath.begin(), ::tolower);
+        
+    	if ( lowerCasePath.find(".ttf") != std::string::npos ) {
+    		fullFontName = CCFileUtils::sharedFileUtils()->fullPathForFilename(pFontName);
+    	}
 
-		CC_BREAK_IF(! dc.getBitmap(pText, nWidth, nHeight, eAlignMask, pFullFontName, nSize));
+		CC_BREAK_IF(! dc.getBitmap(pText, nWidth, nHeight, eAlignMask, fullFontName.c_str(), nSize));
 
 		// assign the dc.m_pData to m_pData in order to save time
 		m_pData = dc.m_pData;

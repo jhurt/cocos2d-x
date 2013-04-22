@@ -5,6 +5,8 @@
 #include "ExtensionMacros.h"
 #include <string>
 #include <vector>
+#include "CCBSequence.h"
+
 
 #define CCB_STATIC_NEW_AUTORELEASE_OBJECT_METHOD(T, METHOD) static T * METHOD() { \
     T * ptr = new T(); \
@@ -26,7 +28,7 @@
     return NULL; \
 }
 
-#define kCCBVersion 4
+#define kCCBVersion 5
 
 enum {
     kCCBPropTypePosition = 0,
@@ -55,7 +57,8 @@ enum {
     kCCBPropTypeCCBFile,
     kCCBPropTypeString,
     kCCBPropTypeBlockCCControl,
-    kCCBPropTypeFloatScale
+    kCCBPropTypeFloatScale,
+    kCCBPropTypeFloatXY
 };
 
 enum {
@@ -167,20 +170,19 @@ class CCBReader : public CCObject
 {
 private:
     
-    bool jsControlled;
     CCData *mData;
     unsigned char *mBytes;
     int mCurrentByte;
     int mCurrentBit;
     
-    std::vector<CCString *> mStringCache;
+    std::vector<std::string> mStringCache;
     std::set<std::string> mLoadedSpriteSheets;
     
     CCObject *mOwner;
     
-    CCBAnimationManager *mActionManager;
+    CCBAnimationManager *mActionManager; //retain
+    CCDictionary* mActionManagers;
 
-    std::vector<std::pair<CCNode*, CCBAnimationManager *> > mAnimationManagers;
     std::set<std::string> *mAnimatedProps;
 
     CCNodeLoaderLibrary *mCCNodeLoaderLibrary;
@@ -188,37 +190,36 @@ private:
     CCBMemberVariableAssigner *mCCBMemberVariableAssigner;
     CCBSelectorResolver *mCCBSelectorResolver;
     
-    CCArray* mOwnerOutletNames;
+    std::vector<std::string> mOwnerOutletNames;
     CCArray* mOwnerOutletNodes;
     CCArray* mNodesWithAnimationManagers;
-    CCArray* mAnimationManagerForNodes;
+    CCArray* mAnimationManagersForNodes;
     
-    CCArray* mOwnerCallbackNames;
+    std::vector<std::string> mOwnerCallbackNames;
     CCArray* mOwnerCallbackNodes;
-    
-
+    std::string mCCBRootPath;
+    bool hasScriptingOwner;    
+    bool init();
 public:
+    
+    bool jsControlled;
     CCBReader(CCNodeLoaderLibrary *pCCNodeLoaderLibrary, CCBMemberVariableAssigner *pCCBMemberVariableAssigner = NULL, CCBSelectorResolver *pCCBSelectorResolver = NULL, CCNodeLoaderListener *pCCNodeLoaderListener = NULL);
     CCBReader(CCBReader *pCCBReader);
     virtual ~CCBReader();
     CCBReader();
-    
-    bool initWithData(CCData *pData, CCObject *pOwner);
-    
+   
+    void setCCBRootPath(const char* pCCBRootPath);
+    const std::string& getCCBRootPath() const;
+
     CCNode* readNodeGraphFromFile(const char *pCCBFileName);
     CCNode* readNodeGraphFromFile(const char *pCCBFileName, CCObject *pOwner);
     CCNode* readNodeGraphFromFile(const char *pCCBFileName, CCObject *pOwner, const CCSize &parentSize);
-    CCNode* readNodeGraphFromFile(const char *pCCBFileName, CCObject *pOwner, CCBAnimationManager **ppAnimationManager);
-    CCNode* readNodeGraphFromFile(const char *pCCBFileName, CCObject *pOwner, const CCSize &parentSize, CCBAnimationManager **ppAnimationManager);
     
-    CCNode* readNodeGraphFromData(CCData *pData, CCObject *pOwner, const CCSize &parentSize, CCBAnimationManager **ppAnimationManager);
     CCNode* readNodeGraphFromData(CCData *pData, CCObject *pOwner, const CCSize &parentSize);
-    
+   
     CCScene* createSceneWithNodeGraphFromFile(const char *pCCBFileName);
     CCScene* createSceneWithNodeGraphFromFile(const char *pCCBFileName, CCObject *pOwner);
     CCScene* createSceneWithNodeGraphFromFile(const char *pCCBFileName, CCObject *pOwner, const CCSize &parentSize);
-    CCScene* createSceneWithNodeGraphFromFile(const char *pCCBFileName, CCObject *pOwner, CCBAnimationManager **ppAnimationManager);
-    CCScene* createSceneWithNodeGraphFromFile(const char *pCCBFileName, CCObject *pOwner, const CCSize &parentSize, CCBAnimationManager **ppAnimationManager);
 
     CCBMemberVariableAssigner* getCCBMemberVariableAssigner();
     CCBSelectorResolver* getCCBSelectorResolver();
@@ -232,30 +233,35 @@ public:
     CCObject* getOwner();
 
     /* Utility methods. */
-    static CCString* lastPathComponent(CCString * pString);
-    static CCString* deletePathExtension(CCString * pString);
-    static CCString* toLowerCase(CCString * pCCString);
-    static bool endsWith(CCString * pString, CCString * pEnding);
-    static CCString* concat(CCString * pStringA, CCString * pStringB);
+    static std::string lastPathComponent(const char* pString);
+    static std::string deletePathExtension(const char* pString);
+    static std::string toLowerCase(const char* pCCString);
+    static bool endsWith(const char* pString, const char* pEnding);
 
     /* Parse methods. */
     int readInt(bool pSigned);
     unsigned char readByte();
     bool readBool();
+    std::string readUTF8();
     float readFloat();
-    CCString* readCachedString();
+    std::string readCachedString();
     bool isJSControlled();
             
     
-    CCArray *getOwnerCallbackNames();
-    CCArray *getOwnerCallbackNodes();
+    bool readCallbackKeyframesForSeq(CCBSequence* seq);
+    bool readSoundKeyframesForSeq(CCBSequence* seq);
+
+
+    
+    CCArray* getOwnerCallbackNames();
+    CCArray* getOwnerCallbackNodes();
     CCArray* getOwnerOutletNames();
     CCArray* getOwnerOutletNodes();
     CCArray* getNodesWithAnimationManagers();
     CCArray* getAnimationManagersForNodes();
 
-    std::vector<std::pair<CCNode *, CCBAnimationManager *> > getAnimationManagers();
-    void setAnimationManagers(std::vector<std::pair<CCNode *, CCBAnimationManager *> > x);
+    CCDictionary* getAnimationManagers();
+    void setAnimationManagers(CCDictionary* x);  // weak reference
     
     void addOwnerCallbackName(std::string name);
     void addOwnerCallbackNode(CCNode *node);
@@ -265,8 +271,7 @@ public:
     
     static float getResolutionScale();
     
-    CCNode* readFileWithCleanUp(bool bCleanUp);
-    bool hasScriptingOwner;    
+    CCNode* readFileWithCleanUp(bool bCleanUp, CCDictionary* am);
 
 private:
     void cleanUpNodeGraph(CCNode *pNode);
@@ -275,14 +280,14 @@ private:
     
     bool readHeader();
     bool readStringCache();
-    void readStringCacheEntry();
+    //void readStringCacheEntry();
     CCNode* readNodeGraph();
     CCNode* readNodeGraph(CCNode * pParent);
 
     bool getBit();
     void alignBits();
-    CCString* readUTF8();
 
+    friend class CCNodeLoader;
 };
 
 // end of effects group

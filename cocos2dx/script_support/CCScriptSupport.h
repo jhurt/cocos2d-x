@@ -26,8 +26,10 @@
 #define __SCRIPT_SUPPORT_H__
 
 #include "platform/CCCommon.h"
+#include "CCAccelerometer.h"
 #include "touch_dispatcher/CCTouch.h"
 #include "cocoa/CCSet.h"
+#include "CCAccelerometer.h"
 #include <map>
 #include <string>
 #include <list>
@@ -48,9 +50,6 @@ enum ccScriptType {
     kScriptTypeLua,
     kScriptTypeJavascript
 };
-
-// #pragma mark -
-// #pragma mark CCScriptHandlerEntry
 
 class CCScriptHandlerEntry : public CCObject
 {
@@ -83,9 +82,6 @@ protected:
  * @addtogroup script_support
  * @{
  */
-
-// #pragma mark -
-// #pragma mark CCSchedulerScriptHandlerEntry
 
 class CCSchedulerScriptHandlerEntry : public CCScriptHandlerEntry
 {
@@ -126,8 +122,6 @@ private:
 };
 
 
-// #pragma mark -
-// #pragma mark CCTouchScriptHandlerEntry
 
 class CCTouchScriptHandlerEntry : public CCScriptHandlerEntry
 {
@@ -162,8 +156,6 @@ private:
     bool    m_bSwallowsTouches;
 };
 
-// #pragma mark -
-// #pragma mark CCScriptEngineProtocol
 
 // Don't make CCScriptEngineProtocol inherits from CCObject since setScriptEngine is invoked only once in AppDelegate.cpp,
 // It will affect the lifecycle of ScriptCore instance, the autorelease pool will be destroyed before destructing ScriptCore.
@@ -219,15 +211,23 @@ public:
     /** execute a callfun event */
     virtual int executeCallFuncActionEvent(CCCallFunc* pAction, CCObject* pTarget = NULL) = 0;
     /** execute a schedule function */
-    virtual int executeSchedule(CCTimer* pTimer, float dt, CCNode* pNode = NULL) = 0;
+    virtual int executeSchedule(int nHandler, float dt, CCNode* pNode = NULL) = 0;
     
     /** functions for executing touch event */
     virtual int executeLayerTouchesEvent(CCLayer* pLayer, int eventType, CCSet *pTouches) = 0;
     virtual int executeLayerTouchEvent(CCLayer* pLayer, int eventType, CCTouch *pTouch) = 0;
     virtual int executeFunctionWithStringData(int nHandler, const char* data) = 0;
 
+    /** functions for keypad event */
+    virtual int executeLayerKeypadEvent(CCLayer* pLayer, int eventType) = 0;
+
     /** execute a accelerometer event */
     virtual int executeAccelerometerEvent(CCLayer* pLayer, CCAcceleration* pAccelerationValue) = 0;
+
+    /** function for common event */
+    virtual int executeEvent(int nHandler, const char* pEventName, CCObject* pEventSource = NULL, const char* pEventSourceClassName = NULL) = 0;
+    /** function for assert test */
+    virtual bool executeAssert(bool cond, const char *msg = NULL) = 0;
 };
 
 /**
