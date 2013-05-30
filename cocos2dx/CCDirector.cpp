@@ -577,6 +577,78 @@ void CCDirector::popScene(void)
     }
 }
 
+void CCDirector::popSceneTransitionSlideInT(float time)
+{
+    CCAssert(m_pRunningScene != NULL, "running scene should not null");
+    
+    m_pobScenesStack->removeLastObject();
+    unsigned int c = m_pobScenesStack->count();
+    
+    if (c == 0)
+    {
+        end();
+    }
+    else
+    {
+        m_bSendCleanupToScene = true;
+        m_pNextScene = CCTransitionSlideInT::create(time, (CCScene*)m_pobScenesStack->objectAtIndex(c - 1));
+    }
+}
+
+void CCDirector::popSceneTransitionSlideInB(float time)
+{
+    CCAssert(m_pRunningScene != NULL, "running scene should not null");
+    
+    m_pobScenesStack->removeLastObject();
+    unsigned int c = m_pobScenesStack->count();
+    
+    if (c == 0)
+    {
+        end();
+    }
+    else
+    {
+        m_bSendCleanupToScene = true;
+        m_pNextScene = CCTransitionSlideInB::create(time, (CCScene*)m_pobScenesStack->objectAtIndex(c - 1));
+    }
+}
+
+void CCDirector::popSceneTransitionFade(float time)
+{
+    CCAssert(m_pRunningScene != NULL, "running scene should not null");
+    
+    m_pobScenesStack->removeLastObject();
+    unsigned int c = m_pobScenesStack->count();
+    
+    if (c == 0)
+    {
+        end();
+    }
+    else
+    {
+        m_bSendCleanupToScene = true;
+        m_pNextScene = CCTransitionFade::create(time, (CCScene*)m_pobScenesStack->objectAtIndex(c - 1));
+    }
+}
+
+void CCDirector::popSceneTransitionCrossFade(float time)
+{
+    CCAssert(m_pRunningScene != NULL, "running scene should not null");
+    
+    m_pobScenesStack->removeLastObject();
+    unsigned int c = m_pobScenesStack->count();
+    
+    if (c == 0)
+    {
+        end();
+    }
+    else
+    {
+        m_bSendCleanupToScene = true;
+        m_pNextScene = CCTransitionCrossFade::create(time, (CCScene*)m_pobScenesStack->objectAtIndex(c - 1));
+    }
+}
+
 void CCDirector::popToRootScene(void)
 {
     popToSceneStackLevel(1);
