@@ -877,6 +877,25 @@ JSBool ScriptingCore::executeFunctionWithOwner(jsval owner, const char *name, ui
     return bRet;
 }
 
+JSBool ScriptingCore::executeAnonymousFunctionWithStringData(jsval owner, const char* dataIn)
+{
+    JSString *dataString = JS_NewStringCopyZ(this->cx_, dataIn);
+    jsval data = STRING_TO_JSVAL(dataString);
+    JSContext* cx = this->cx_;
+    JSObject* obj = JSVAL_TO_OBJECT(owner);
+    jsval retVal;
+    return JS_CallFunctionValue(cx, obj, owner, 1, &data, &retVal);
+}
+
+JSBool ScriptingCore::executeAnonymousFunction(jsval owner)
+{
+    jsval data;
+    JSContext* cx = this->cx_;
+    JSObject* obj = JSVAL_TO_OBJECT(owner);
+    jsval retVal;
+    return JS_CallFunctionValue(cx, obj, owner, 0, &data, &retVal);
+}
+
 int ScriptingCore::executeAccelerometerEvent(CCLayer *pLayer, CCAcceleration *pAccelerationValue) {
 
     jsval value = ccacceleration_to_jsval(this->getGlobalContext(), *pAccelerationValue);
