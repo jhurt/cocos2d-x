@@ -80,8 +80,13 @@ Basically,it's only enabled in android
 
 It's new in cocos2d-x since v0.99.5
 */
+<<<<<<< HEAD
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
     #define CC_ENABLE_CACHE_TEXTURE_DATA       0
+=======
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN) || (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+    #define CC_ENABLE_CACHE_TEXTURE_DATA       1
+>>>>>>> 16caffb... fix black screen when onResume is called on Kindle
 #else
     #define CC_ENABLE_CACHE_TEXTURE_DATA       0
 #endif
