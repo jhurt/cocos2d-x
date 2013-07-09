@@ -225,6 +225,11 @@ public:
      * ONLY call it if there is a running scene.
      */
     void popScene(void);
+    void popSceneTransitionSlideInT(float time);
+    void popSceneTransitionSlideInB(float time);
+    void popSceneTransitionFade(float time);
+    void popSceneTransitionCrossFade(float time);
+
 
     /**Pops out all scenes from the queue until the root scene in the queue.
      * This scene will replace the running one.
