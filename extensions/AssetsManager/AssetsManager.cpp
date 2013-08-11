@@ -124,7 +124,7 @@ bool AssetsManager::checkUpdate()
     }
     
     string recordedVersion = CCUserDefault::sharedUserDefault()->getStringForKey(KEY_OF_VERSION);
-    if (recordedVersion == _version)
+    if (strcmp(recordedVersion.c_str(), _version.c_str()) == 0)
     {
         CCLOG("there is not new version");
         // Set resource search path.
@@ -154,7 +154,7 @@ void AssetsManager::update()
     
     // Is package already downloaded?
     string downloadedVersion = CCUserDefault::sharedUserDefault()->getStringForKey(KEY_OF_DOWNLOADED_VERSION);
-    if (downloadedVersion != _version)
+    if (strcmp(downloadedVersion.c_str(), _version.c_str()) != 0)
     {
         if (! downLoad()) return;
         
