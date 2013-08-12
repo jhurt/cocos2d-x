@@ -43,22 +43,12 @@ using namespace std;
 
 NS_CC_EXT_BEGIN;
 
-#define KEY_OF_VERSION   "current-version-code"
-#define KEY_OF_DOWNLOADED_VERSION    "downloaded-version-code"
-#define TEMP_PACKAGE_FILE_NAME    "cocos2dx-update-temp-package.zip"
+//#define KEY_OF_VERSION   "current-version-code"
+//#define KEY_OF_DOWNLOADED_VERSION    "downloaded-version-code"
+//#define TEMP_PACKAGE_FILE_NAME    "cocos2dx-update-temp-package.zip"
 #define BUFFER_SIZE    8192
 #define MAX_FILENAME   512
 
-
-AssetsManager::AssetsManager()
-: _packageUrl("")
-, _versionFileUrl("")
-, _version("")
-, _curl(NULL)
-{
-    _storagePath = CCFileUtils::sharedFileUtils()->getWritablePath();
-    checkStoragePath();
-}
 
 AssetsManager::AssetsManager(const char* packageUrl, const char* versionFileUrl)
 : _packageUrl(packageUrl)
@@ -68,6 +58,13 @@ AssetsManager::AssetsManager(const char* packageUrl, const char* versionFileUrl)
 {
     _storagePath = CCFileUtils::sharedFileUtils()->getWritablePath();
     checkStoragePath();
+    string versionFileUrlString = string(versionFileUrl);
+    unsigned index = versionFileUrlString.find_last_of("/");
+    _versionKey = versionFileUrlString.substr(index+1) + string("_version");
+    _downloadedVersionKey = versionFileUrlString.substr(index+1) + string("_downloaded_version");
+    string packageUrlString = string(packageUrl);
+    index = packageUrlString.find_last_of("/");
+    _tempPackageFilename = packageUrlString.substr(index+1) + string("_package");
 }
 
 AssetsManager::AssetsManager(const char* packageUrl, const char* versionFileUrl, const char* storagePath)
@@ -78,6 +75,13 @@ AssetsManager::AssetsManager(const char* packageUrl, const char* versionFileUrl,
 , _curl(NULL)
 {
     checkStoragePath();
+    string versionFileUrlString = string(versionFileUrl);
+    unsigned index = versionFileUrlString.find_last_of("/");
+    _versionKey = versionFileUrlString.substr(index+1) + string("_version");
+    _downloadedVersionKey = versionFileUrlString.substr(index+1) + string("_downloaded_version");
+    string packageUrlString = string(packageUrl);
+    index = packageUrlString.find_last_of("/");
+    _tempPackageFilename = packageUrlString.substr(index+1) + string("_package");
 }
 
 void AssetsManager::checkStoragePath()
@@ -131,7 +135,7 @@ AssetsCheckUpdateResult AssetsManager::checkUpdate()
         return ASSETS_CHECK_UPDATE_ERROR;
     }
     
-    string recordedVersion = CCUserDefault::sharedUserDefault()->getStringForKey(KEY_OF_VERSION);
+    string recordedVersion = CCUserDefault::sharedUserDefault()->getStringForKey(_versionKey.c_str());
     if (strcmp(recordedVersion.c_str(), _version.c_str()) == 0)
     {
         CCLOG("there is not new version");
@@ -161,13 +165,13 @@ AssetsUpdateResult AssetsManager::update()
     if (checkUpdate() != ASSETS_CHECK_UPDATE_AVAILABLE) return ASSETS_UPDATE_NO_UPDATE;
     
     // Is package already downloaded?
-    string downloadedVersion = CCUserDefault::sharedUserDefault()->getStringForKey(KEY_OF_DOWNLOADED_VERSION);
+    string downloadedVersion = CCUserDefault::sharedUserDefault()->getStringForKey(_downloadedVersionKey.c_str());
     if (strcmp(downloadedVersion.c_str(), _version.c_str()) != 0)
     {
         if (!download()) return ASSETS_UPDATE_ERROR;
         
         // Record downloaded version.
-        CCUserDefault::sharedUserDefault()->setStringForKey(KEY_OF_DOWNLOADED_VERSION, _version.c_str());
+        CCUserDefault::sharedUserDefault()->setStringForKey(_downloadedVersionKey.c_str(), _version.c_str());
         CCUserDefault::sharedUserDefault()->flush();
     }
     
@@ -175,10 +179,10 @@ AssetsUpdateResult AssetsManager::update()
     if (! uncompress()) return ASSETS_UPDATE_ERROR;
     
     // Record new version code.
-    CCUserDefault::sharedUserDefault()->setStringForKey(KEY_OF_VERSION, _version.c_str());
+    CCUserDefault::sharedUserDefault()->setStringForKey(_versionKey.c_str(), _version.c_str());
     
     // Unrecord downloaded version code.
-    CCUserDefault::sharedUserDefault()->setStringForKey(KEY_OF_DOWNLOADED_VERSION, "");
+    CCUserDefault::sharedUserDefault()->setStringForKey(_downloadedVersionKey.c_str(), "");
     
     CCUserDefault::sharedUserDefault()->flush();
     
@@ -186,7 +190,7 @@ AssetsUpdateResult AssetsManager::update()
     setSearchPath();
     
     // Delete unloaded zip file.
-    string zipfileName = _storagePath + TEMP_PACKAGE_FILE_NAME;
+    string zipfileName = _storagePath + _tempPackageFilename;
     if (remove(zipfileName.c_str()) != 0)
     {
         CCLOG("can not remove downloaded zip file");
@@ -197,7 +201,7 @@ AssetsUpdateResult AssetsManager::update()
 bool AssetsManager::uncompress()
 {
     // Open the zip file
-    string outFileName = _storagePath + TEMP_PACKAGE_FILE_NAME;
+    string outFileName = _storagePath + _tempPackageFilename;
     unzFile zipfile = unzOpen(outFileName.c_str());
     if (! zipfile)
     {
@@ -367,7 +371,7 @@ static int progressFunc(void *ptr, double totalToDownload, double nowDownloaded,
 bool AssetsManager::download()
 {
     // Create a file to save package.
-    string outFileName = _storagePath + TEMP_PACKAGE_FILE_NAME;
+    string outFileName = _storagePath + _tempPackageFilename;
     FILE *fp = fopen(outFileName.c_str(), "wb");
     if (! fp)
     {
@@ -437,12 +441,12 @@ void AssetsManager::setVersionFileUrl(const char *versionFileUrl)
 
 string AssetsManager::getVersion()
 {
-    return CCUserDefault::sharedUserDefault()->getStringForKey(KEY_OF_VERSION);
+    return CCUserDefault::sharedUserDefault()->getStringForKey(_versionKey.c_str());
 }
 
 void AssetsManager::deleteVersion()
 {
-    CCUserDefault::sharedUserDefault()->setStringForKey(KEY_OF_VERSION, "");
+    CCUserDefault::sharedUserDefault()->setStringForKey(_versionKey.c_str(), "");
 }
 
 NS_CC_EXT_END;

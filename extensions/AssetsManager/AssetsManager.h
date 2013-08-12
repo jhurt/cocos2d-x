@@ -52,9 +52,6 @@ public:
     };
 
     
-    //! Default constructor. You should set server address later.
-    AssetsManager();
-    
     /* @brief Creates a AssetsManager with new package url and version code url.
      *        AssetsManager will use the value returned by CCFileUtils::getWritablePath() as storage path.
      *
@@ -133,6 +130,10 @@ private:
     
     std::string _packageUrl;
     std::string _versionFileUrl;
+    
+    std::string _versionKey;
+    std::string _downloadedVersionKey;
+    std::string _tempPackageFilename;
     
     CURL *_curl;
 };
