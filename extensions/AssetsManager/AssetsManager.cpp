@@ -49,6 +49,7 @@ NS_CC_EXT_BEGIN;
 #define BUFFER_SIZE    8192
 #define MAX_FILENAME   512
 
+
 AssetsManager::AssetsManager()
 : _packageUrl("")
 , _versionFileUrl("")
@@ -95,15 +96,15 @@ static size_t getVersionCode(void *ptr, size_t size, size_t nmemb, void *userdat
     return (size * nmemb);
 }
 
-bool AssetsManager::checkUpdate()
+AssetsCheckUpdateResult AssetsManager::checkUpdate()
 {
-    if (_versionFileUrl.size() == 0) return false;
+    if (_versionFileUrl.size() == 0) return ASSETS_CHECK_UPDATE_ERROR;
     
     _curl = curl_easy_init();
     if (! _curl)
     {
         CCLOG("can not init curl");
-        return false;
+        return ASSETS_CHECK_UPDATE_ERROR;
     }
     
     // Clear _version before assign new value.
@@ -114,13 +115,20 @@ bool AssetsManager::checkUpdate()
     curl_easy_setopt(_curl, CURLOPT_SSL_VERIFYPEER, 0L);
     curl_easy_setopt(_curl, CURLOPT_WRITEFUNCTION, getVersionCode);
     curl_easy_setopt(_curl, CURLOPT_WRITEDATA, &_version);
-    res = curl_easy_perform(_curl);
     
+    res = curl_easy_perform(_curl);
     if (res != 0)
     {
         CCLOG("can not get version file content, error code is %d", res);
         curl_easy_cleanup(_curl);
-        return false;
+        return ASSETS_CHECK_UPDATE_ERROR;
+    }
+
+    long http_code = 0;
+    curl_easy_getinfo (_curl, CURLINFO_RESPONSE_CODE, &http_code);
+    if(http_code != 200) {
+        CCLOG("got http response %d", http_code);
+        return ASSETS_CHECK_UPDATE_ERROR;
     }
     
     string recordedVersion = CCUserDefault::sharedUserDefault()->getStringForKey(KEY_OF_VERSION);
@@ -129,15 +137,15 @@ bool AssetsManager::checkUpdate()
         CCLOG("there is not new version");
         // Set resource search path.
         setSearchPath();
-        return false;
+        return ASSETS_CHECK_UPDATE_NOT_AVAILABLE;
     }
     
     CCLOG("there is a new version: %s", _version.c_str());
     
-    return true;
+    return ASSETS_CHECK_UPDATE_AVAILABLE;
 }
 
-void AssetsManager::update()
+AssetsUpdateResult AssetsManager::update()
 {
     // 1. Urls of package and version should be valid;
     // 2. Package should be a zip file.
@@ -146,17 +154,17 @@ void AssetsManager::update()
         std::string::npos == _packageUrl.find(".zip"))
     {
         CCLOG("no version file url, or no package url, or the package is not a zip file");
-        return;
+        return ASSETS_UPDATE_ERROR;
     }
     
     // Check if there is a new version.
-    if (! checkUpdate()) return;
+    if (checkUpdate() != ASSETS_CHECK_UPDATE_AVAILABLE) return ASSETS_UPDATE_NO_UPDATE;
     
     // Is package already downloaded?
     string downloadedVersion = CCUserDefault::sharedUserDefault()->getStringForKey(KEY_OF_DOWNLOADED_VERSION);
     if (strcmp(downloadedVersion.c_str(), _version.c_str()) != 0)
     {
-        if (! downLoad()) return;
+        if (!download()) return ASSETS_UPDATE_ERROR;
         
         // Record downloaded version.
         CCUserDefault::sharedUserDefault()->setStringForKey(KEY_OF_DOWNLOADED_VERSION, _version.c_str());
@@ -164,7 +172,7 @@ void AssetsManager::update()
     }
     
     // Uncompress zip file.
-    if (! uncompress()) return;
+    if (! uncompress()) return ASSETS_UPDATE_ERROR;
     
     // Record new version code.
     CCUserDefault::sharedUserDefault()->setStringForKey(KEY_OF_VERSION, _version.c_str());
@@ -183,6 +191,7 @@ void AssetsManager::update()
     {
         CCLOG("can not remove downloaded zip file");
     }
+    return ASSETS_UPDATE_SUCCESS;
 }
 
 bool AssetsManager::uncompress()
@@ -355,7 +364,7 @@ static int progressFunc(void *ptr, double totalToDownload, double nowDownloaded,
     return 0;
 }
 
-bool AssetsManager::downLoad()
+bool AssetsManager::download()
 {
     // Create a file to save package.
     string outFileName = _storagePath + TEMP_PACKAGE_FILE_NAME;
@@ -379,6 +388,13 @@ bool AssetsManager::downLoad()
     {
         CCLOG("error when download package");
         fclose(fp);
+        return false;
+    }
+    
+    long http_code = 0;
+    curl_easy_getinfo (_curl, CURLINFO_RESPONSE_CODE, &http_code);
+    if(http_code != 200) {
+        CCLOG("got http response %d", http_code);
         return false;
     }
     

@@ -33,6 +33,10 @@
 
 NS_CC_EXT_BEGIN
 
+
+typedef enum { ASSETS_CHECK_UPDATE_AVAILABLE, ASSETS_CHECK_UPDATE_NOT_AVAILABLE, ASSETS_CHECK_UPDATE_ERROR } AssetsCheckUpdateResult;
+typedef enum { ASSETS_UPDATE_SUCCESS, ASSETS_UPDATE_ERROR, ASSETS_UPDATE_NO_UPDATE } AssetsUpdateResult;
+
 /* 
  *  This class is used to auto update resources, such as pictures or scripts.
  *  The updated package should be a zip file. And there should be a file named
@@ -46,6 +50,7 @@ public:
         ServerNotAvailable,    /** server address error or timeout */
         TimeOut,
     };
+
     
     //! Default constructor. You should set server address later.
     AssetsManager();
@@ -70,12 +75,12 @@ public:
      *        You may use this method before updating, then let user determine whether
      *        he wants to update resources.
      */
-    virtual bool checkUpdate();
+    virtual AssetsCheckUpdateResult checkUpdate();
     
     /* @brief Download new package if there is a new version, and uncompress downloaded zip file.
      *        Ofcourse it will set search path that stores downloaded files.
      */
-    virtual void update();
+    virtual AssetsUpdateResult update();
     
     /* @brief Gets url of package.
      */
@@ -113,7 +118,7 @@ public:
     void setStoragePath(const char* storagePath);
     
 protected:
-    bool downLoad();
+    bool download();
     void checkStoragePath();
     bool uncompress();
     bool createDirectory(const char *path);
