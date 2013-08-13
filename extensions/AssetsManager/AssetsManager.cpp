@@ -84,6 +84,10 @@ AssetsManager::AssetsManager(const char* packageUrl, const char* versionFileUrl,
     _tempPackageFilename = packageUrlString.substr(index+1) + string("_package");
 }
 
+AssetsManager::~AssetsManager() {
+    curl_easy_cleanup(_curl);
+}
+
 void AssetsManager::checkStoragePath()
 {
     if (_storagePath.size() > 0 && _storagePath[_storagePath.size() - 1] != '/')
@@ -124,7 +128,6 @@ AssetsCheckUpdateResult AssetsManager::checkUpdate()
     if (res != 0)
     {
         CCLOG("can not get version file content, error code is %d", res);
-        curl_easy_cleanup(_curl);
         return ASSETS_CHECK_UPDATE_ERROR;
     }
 
@@ -387,7 +390,7 @@ bool AssetsManager::download()
     curl_easy_setopt(_curl, CURLOPT_NOPROGRESS, false);
     curl_easy_setopt(_curl, CURLOPT_PROGRESSFUNCTION, progressFunc);
     res = curl_easy_perform(_curl);
-    curl_easy_cleanup(_curl);
+    
     if (res != 0)
     {
         CCLOG("error when download package");
@@ -397,11 +400,11 @@ bool AssetsManager::download()
     
     long http_code = 0;
     curl_easy_getinfo (_curl, CURLINFO_RESPONSE_CODE, &http_code);
+    
     if(http_code != 200) {
         CCLOG("got http response %d", http_code);
         return false;
     }
-    
     CCLOG("succeed downloading package %s", _packageUrl.c_str());
     
     fclose(fp);

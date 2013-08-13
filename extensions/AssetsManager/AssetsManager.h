@@ -68,6 +68,8 @@ public:
      */
     AssetsManager(const char* packageUrl, const char* versionFileUrl, const char* storagePath);
     
+    virtual ~AssetsManager();
+    
     /* @brief Check out if there is a new version resource.
      *        You may use this method before updating, then let user determine whether
      *        he wants to update resources.
