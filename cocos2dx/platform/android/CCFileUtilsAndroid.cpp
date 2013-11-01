@@ -160,6 +160,7 @@ unsigned char* CCFileUtilsAndroid::getFileData(const char* pszFileName, const ch
 
 string CCFileUtilsAndroid::getWritablePath()
 {
+    return "/data/data/com.ebytee.slotstravaganza/files";
     // Fix for Nexus 10 (Android 4.2 multi-user environment)
     // the path is retrieved through Java Context.getCacheDir() method
     string dir("");
