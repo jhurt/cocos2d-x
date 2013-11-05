@@ -71,7 +71,9 @@
 	} while(0)
 #endif
 
-
+#define JSB_PRECONDITION3( condition, context, ret_value, ...) do { \
+    if( ! (condition) ) return (ret_value); \
+} while(0)
 
 /** @def JSB_REPRESENT_LONGLONG_AS_STR
  When JSB_REPRESENT_LONGLONG_AS_STR is defined, the long long will be represented as JS strings.
@@ -152,7 +154,7 @@ JSAutoCompartment ac(cx, obj)
  * @def JSB_DEBUGGER_PORT
  * The port number, where the client will be listening on
  */
-#define JSB_DEBUGGER_PORT 1337
+#define JSB_DEBUGGER_PORT 5086
 
 /** @def JSB_INCLUDE_SYSTEM
  Whether or not it should include bindings for system components like LocalStorage
@@ -167,6 +169,13 @@ JSAutoCompartment ac(cx, obj)
 #ifndef JSB_INCLUDE_OPENGL
 #define JSB_INCLUDE_OPENGL 1
 #endif // JSB_INCLUDE_OPENGL
+
+/** @def JSB_INCLUDE_XMLHTTP
+ Whether or not it should include bindings for XmlHttpRequest
+ */
+#ifndef JSB_INCLUDE_XMLHTTP
+#define JSB_INCLUDE_XMLHTTP 1
+#endif // JSB_INCLUDE_XMLHTTP
 
 #ifndef JSB_MAX_STACK_QUOTA
 #define JSB_MAX_STACK_QUOTA 500000

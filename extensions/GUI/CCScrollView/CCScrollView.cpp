@@ -61,7 +61,9 @@ CCScrollView::CCScrollView()
 
 CCScrollView::~CCScrollView()
 {
-    m_pTouches->release();
+    CC_SAFE_RELEASE(m_pTouches);
+    this->unregisterScriptHandler(kScrollViewScroll);
+    this->unregisterScriptHandler(kScrollViewZoom);
 }
 
 CCScrollView* CCScrollView::create(CCSize size, CCNode* container/* = NULL*/)
@@ -120,6 +122,7 @@ bool CCScrollView::initWithViewSize(CCSize size, CCNode *container/* = NULL*/)
         
         this->addChild(m_pContainer);
         m_fMinScale = m_fMaxScale = 1.0f;
+        m_mapScriptHandler.clear();
         return true;
     }
     return false;
@@ -132,7 +135,7 @@ bool CCScrollView::init()
 
 void CCScrollView::registerWithTouchDispatcher()
 {
-    CCDirector::sharedDirector()->getTouchDispatcher()->addTargetedDelegate(this, 0, false);
+    CCDirector::sharedDirector()->getTouchDispatcher()->addTargetedDelegate(this, CCLayer::getTouchPriority(), false);
 }
 
 bool CCScrollView::isNodeVisible(CCNode* node)
@@ -436,7 +439,7 @@ void CCScrollView::performedAnimatedScroll(float dt)
 }
 
 
-const CCSize& CCScrollView::getContentSize()
+const CCSize& CCScrollView::getContentSize() const
 {
 	return m_pContainer->getContentSize();
 }
@@ -764,8 +767,43 @@ CCRect CCScrollView::getViewRect()
         scaleX *= p->getScaleX();
         scaleY *= p->getScaleY();
     }
-    
+
+    // Support negative scaling. Not doing so causes intersectsRect calls
+    // (eg: to check if the touch was within the bounds) to return false.
+    // Note, CCNode::getScale will assert if X and Y scales are different.
+    if(scaleX<0.f) {
+        screenPos.x += m_tViewSize.width*scaleX;
+        scaleX = -scaleX;
+    }
+    if(scaleY<0.f) {
+        screenPos.y += m_tViewSize.height*scaleY;
+        scaleY = -scaleY;
+    }
+
     return CCRectMake(screenPos.x, screenPos.y, m_tViewSize.width*scaleX, m_tViewSize.height*scaleY);
 }
 
+void CCScrollView::registerScriptHandler(int nFunID,int nScriptEventType)
+{
+    this->unregisterScriptHandler(nScriptEventType);
+    m_mapScriptHandler[nScriptEventType] = nFunID;
+}
+void CCScrollView::unregisterScriptHandler(int nScriptEventType)
+{
+    std::map<int,int>::iterator iter = m_mapScriptHandler.find(nScriptEventType);
+    
+    if (m_mapScriptHandler.end() != iter)
+    {
+        m_mapScriptHandler.erase(iter);
+    }
+}
+int  CCScrollView::getScriptHandler(int nScriptEventType)
+{
+    std::map<int,int>::iterator iter = m_mapScriptHandler.find(nScriptEventType);
+    
+    if (m_mapScriptHandler.end() != iter)
+        return iter->second;
+    
+    return 0;
+}
 NS_CC_EXT_END

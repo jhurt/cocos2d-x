@@ -78,7 +78,9 @@ bool CCControl::init()
         this->setTouchPriority(1);
         // Initialise the tables
         m_pDispatchTable = new CCDictionary(); 
-
+        // Initialise the mapHandleOfControlEvents
+        m_mapHandleOfControlEvent.clear();
+        
         return true;
     }
     else
@@ -124,6 +126,18 @@ void CCControl::sendActionsForControlEvents(CCControlEvent controlEvents)
             {
                 CCInvocation* invocation = (CCInvocation*)pObj;
                 invocation->invoke(this);
+            }
+            //Call ScriptFunc
+            if (kScriptTypeNone != m_eScriptType)
+            {
+                int nHandler = this->getHandleOfControlEvent(controlEvents);
+                if (-1 != nHandler) {
+                    CCArray* pArrayArgs = CCArray::createWithCapacity(3);
+                    pArrayArgs->addObject(CCString::create(""));
+                    pArrayArgs->addObject(this);
+                    pArrayArgs->addObject(CCInteger::create(1 << i));
+                    CCScriptEngineManager::sharedManager()->getScriptEngine()->executeEventWithArgs(nHandler, pArrayArgs);
+                }
             }
         }
     }
@@ -259,7 +273,7 @@ bool CCControl::isTouchInside(CCTouch* touch)
 
 CCArray* CCControl::dispatchListforControlEvent(CCControlEvent controlEvent)
 {
-    CCArray* invocationList = (CCArray*)m_pDispatchTable->objectForKey(controlEvent);
+    CCArray* invocationList = static_cast<CCArray*>(m_pDispatchTable->objectForKey((int)controlEvent));
 
     // If the invocation list does not exist for the  dispatch table, we create it
     if (invocationList == NULL)
@@ -326,4 +340,29 @@ bool CCControl::hasVisibleParents()
     return true;
 }
 
+void CCControl::addHandleOfControlEvent(int nFunID,CCControlEvent controlEvent)
+{
+    m_mapHandleOfControlEvent[controlEvent] = nFunID;
+}
+
+void CCControl::removeHandleOfControlEvent(CCControlEvent controlEvent)
+{
+    std::map<int,int>::iterator Iter = m_mapHandleOfControlEvent.find(controlEvent);
+    
+    if (m_mapHandleOfControlEvent.end() != Iter)
+    {
+        m_mapHandleOfControlEvent.erase(Iter);
+    }
+    
+}
+
+int  CCControl::getHandleOfControlEvent(CCControlEvent controlEvent)
+{
+    std::map<int,int>::iterator Iter = m_mapHandleOfControlEvent.find(controlEvent);
+    
+    if (m_mapHandleOfControlEvent.end() != Iter)
+        return Iter->second;
+    
+    return -1;
+}
 NS_CC_EXT_END

@@ -341,10 +341,10 @@ bool AssetsManager::createDirectory(const char *path)
     return true;
 #else
     BOOL ret = CreateDirectoryA(path, NULL);
-	if (!ret && ERROR_ALREADY_EXISTS != GetLastError())
-	{
-		return false;
-	}
+    if (!ret && ERROR_ALREADY_EXISTS != GetLastError())
+    {
+        return false;
+    }
     return true;
 #endif
 }

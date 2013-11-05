@@ -66,6 +66,8 @@ TESTLAYER_CREATE_FUNC(TextureCache1);
 TESTLAYER_CREATE_FUNC(TextureDrawAtPoint);
 TESTLAYER_CREATE_FUNC(TextureDrawInRect);
 
+TESTLAYER_CREATE_FUNC(TextureETC1);
+
 static NEWTEXTURE2DTESTFUNC createFunctions[] =
 {
     createTextureMemoryAlloc,
@@ -118,6 +120,8 @@ static NEWTEXTURE2DTESTFUNC createFunctions[] =
     createTextureCache1,
     createTextureDrawAtPoint,
     createTextureDrawInRect,
+    
+    createTextureETC1,
 };
 
 static unsigned int TEST_CASE_COUNT = sizeof(createFunctions) / sizeof(createFunctions[0]);
@@ -314,12 +318,16 @@ std::string TextureJPEG::title()
 void TextureWEBP::onEnter()
 {
     TextureDemo::onEnter();
+#if (CC_TARGET_PLATFORM != CC_PLATFORM_WINRT) && (CC_TARGET_PLATFORM != CC_PLATFORM_WP8)
     CCSize s = CCDirector::sharedDirector()->getWinSize();
     
     CCSprite *img = CCSprite::create("Images/test_image.webp");
     img->setPosition(ccp( s.width/2.0f, s.height/2.0f));
     addChild(img);
     CCTextureCache::sharedTextureCache()->dumpCachedTextureInfo();
+#else
+	CCMessageBox("TextureWEBP not yet implemented for WinRT/WP8.","Alert");
+#endif
 }
 
 std::string TextureWEBP::title()
@@ -2049,4 +2057,39 @@ void TexturePVRv3Premult::transformSprite(cocos2d::CCSprite *sprite)
     CCSequence *seq = CCSequence::create(fade, fadein, dl, NULL);
     CCRepeatForever *repeat = CCRepeatForever::create(seq);
     sprite->runAction(repeat);
+}
+
+// Implementation of ETC1
+
+/*
+class TextureETC1 : public TextureDemo
+{
+public:
+    TextureETC1();
+    
+    virtual std::string title();
+    virtual std::string subtitle();
+};
+ */
+
+TextureETC1::TextureETC1()
+{
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+    CCSprite *sprite = CCSprite::create("Images/ETC1.pkm");
+    
+    CCSize size = CCDirector::sharedDirector()->getWinSize();
+    sprite->setPosition(ccp(size.width/2, size.height/2));
+    
+    addChild(sprite);
+#endif
+}
+
+std::string TextureETC1::title()
+{
+    return "ETC1 texture";
+}
+
+std::string TextureETC1::subtitle()
+{
+    return "only supported on android";
 }

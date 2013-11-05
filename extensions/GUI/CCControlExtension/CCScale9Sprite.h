@@ -29,7 +29,7 @@ THE SOFTWARE.
 #define __CCScale9Sprite_H__
 
 #include "cocos2d.h"
-#include "ExtensionMacros.h"
+#include "../../ExtensionMacros.h"
 
 NS_CC_EXT_BEGIN
 
@@ -106,6 +106,9 @@ protected:
 public:
     
     virtual void setContentSize(const CCSize & size);
+    /**
+     *  @js NA
+     */
     virtual void visit();
     
     virtual bool init();
@@ -308,11 +311,16 @@ public:
      */
     virtual bool isOpacityModifyRGB(void);
     virtual void setOpacity(GLubyte opacity);
+	virtual GLubyte getOpacity();
     virtual void setColor(const ccColor3B& color);
+	virtual const ccColor3B& getColor();
 
     virtual bool updateWithBatchNode(CCSpriteBatchNode* batchnode, CCRect rect, bool rotated, CCRect capInsets);
 
     virtual void setSpriteFrame(CCSpriteFrame * spriteFrame);
+    
+    virtual void updateDisplayedOpacity(GLubyte parentOpacity);
+    virtual void updateDisplayedColor(const cocos2d::ccColor3B& parentColor);
 };
 
 // end of GUI group
