@@ -134,7 +134,7 @@ AssetsCheckUpdateResult AssetsManager::checkUpdate()
     long http_code = 0;
     curl_easy_getinfo (_curl, CURLINFO_RESPONSE_CODE, &http_code);
     if(http_code != 200) {
-        CCLOG("got http response %d", http_code);
+        CCLOG("got http response %ld", http_code);
         return ASSETS_CHECK_UPDATE_ERROR;
     }
     
@@ -366,7 +366,7 @@ static size_t downLoadPackage(void *ptr, size_t size, size_t nmemb, void *userda
 
 static int progressFunc(void *ptr, double totalToDownload, double nowDownloaded, double totalToUpLoad, double nowUpLoaded)
 {
-    CCLOG("downloading... %d%%", (int)(nowDownloaded/totalToDownload*100));
+    //CCLOG("downloading... %d%%", (int)(nowDownloaded/totalToDownload*100));
     
     return 0;
 }
@@ -402,7 +402,7 @@ bool AssetsManager::download()
     curl_easy_getinfo (_curl, CURLINFO_RESPONSE_CODE, &http_code);
     
     if(http_code != 200) {
-        CCLOG("got http response %d", http_code);
+        CCLOG("got http response %ld", http_code);
         return false;
     }
     CCLOG("succeed downloading package %s", _packageUrl.c_str());
