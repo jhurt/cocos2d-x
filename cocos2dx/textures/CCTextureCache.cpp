@@ -857,6 +857,7 @@ void VolatileTexture::reloadAllTextures()
         case kImageFile:
             {
                 std::string lowerCase(vt->m_strFileName.c_str());
+                CCLOG("reload texture: %s", vt->m_strFileName.c_str());
                 for (unsigned int i = 0; i < lowerCase.length(); ++i)
                 {
                     lowerCase[i] = tolower(lowerCase[i]);

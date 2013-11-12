@@ -697,8 +697,10 @@ bool CCTexture2D::initWithPVRFile(const char* file)
     // nothing to do with CCObject::init
     
     CCTexturePVR *pvr = new CCTexturePVR;
-    bRet = pvr->initWithContentsOfFile(file);
-        
+    if(file) {
+        bRet = pvr->initWithContentsOfFile(file);
+    }
+    
     if (bRet)
     {
         pvr->setRetainName(true); // don't dealloc texture on release

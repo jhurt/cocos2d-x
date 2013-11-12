@@ -134,7 +134,7 @@ AssetsCheckUpdateResult AssetsManager::checkUpdate()
     long http_code = 0;
     curl_easy_getinfo (_curl, CURLINFO_RESPONSE_CODE, &http_code);
     if(http_code != 200) {
-        CCLOG("got http response %ld", http_code);
+        CCLOG("check update got http response %ld", http_code);
         return ASSETS_CHECK_UPDATE_ERROR;
     }
     
@@ -402,7 +402,7 @@ bool AssetsManager::download()
     curl_easy_getinfo (_curl, CURLINFO_RESPONSE_CODE, &http_code);
     
     if(http_code != 200) {
-        CCLOG("got http response %ld", http_code);
+        CCLOG("%s download got http response %ld", _packageUrl.c_str(), http_code);
         return false;
     }
     CCLOG("succeed downloading package %s", _packageUrl.c_str());

@@ -22,8 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-//#define COCOS2D_DEBUG 1
-
 #define __CC_PLATFORM_IMAGE_CPP__
 #include "platform/CCImageCommon_cpp.h"
 #include "platform/CCPlatformMacros.h"
