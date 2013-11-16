@@ -197,7 +197,8 @@ void JniHelper::setJavaVM(JavaVM *javaVM)
 
     JNIEnv *env;
     m_psJavaVM->GetEnv((void **) &env, JNI_VERSION_1_4);
-    jCocos2dxHelperClass = env->FindClass("org/cocos2dx/lib/Cocos2dxHelper");
+    jclass cls = env->FindClass("org/cocos2dx/lib/Cocos2dxHelper");
+    jCocos2dxHelperClass = (jclass) env->NewGlobalRef(cls);
     jGetStringForKeyMethodID = env->GetStaticMethodID(jCocos2dxHelperClass, "getStringForKey", "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;");
     jSetStringForKeyMethodID = env->GetStaticMethodID(jCocos2dxHelperClass, "setStringForKey", "(Ljava/lang/String;Ljava/lang/String;)V");
 }
