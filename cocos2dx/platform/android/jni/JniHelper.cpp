@@ -182,6 +182,9 @@ extern "C"
 NS_CC_BEGIN
 
 JavaVM* JniHelper::m_psJavaVM = NULL;
+jclass jCocos2dxHelperClass;
+jmethodID jGetStringForKeyMethodID;
+jmethodID jSetStringForKeyMethodID;
 
 JavaVM* JniHelper::getJavaVM()
 {
@@ -191,6 +194,24 @@ JavaVM* JniHelper::getJavaVM()
 void JniHelper::setJavaVM(JavaVM *javaVM)
 {
     m_psJavaVM = javaVM;
+
+    JNIEnv *env;
+    m_psJavaVM->GetEnv((void **) &env, JNI_VERSION_1_4);
+    jCocos2dxHelperClass = env->FindClass("org/cocos2dx/lib/Cocos2dxHelper");
+    jGetStringForKeyMethodID = env->GetStaticMethodID(jCocos2dxHelperClass, "getStringForKey", "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;");
+    jSetStringForKeyMethodID = env->GetStaticMethodID(jCocos2dxHelperClass, "setStringForKey", "(Ljava/lang/String;Ljava/lang/String;)V");
+}
+
+jclass JniHelper::getCocos2dxHelperClass() {
+    return jCocos2dxHelperClass;
+}
+
+jmethodID JniHelper::getJGetStringForKeyMethodID() {
+    return jGetStringForKeyMethodID;
+}
+
+jmethodID JniHelper::getJSetStringForKeyMethodID() {
+    return jSetStringForKeyMethodID;
 }
 
 jclass JniHelper::getClassID(const char *className, JNIEnv *env)

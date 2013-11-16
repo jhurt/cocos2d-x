@@ -251,24 +251,39 @@ double getDoubleForKeyJNI(const char* pKey, double defaultValue)
 
 std::string getStringForKeyJNI(const char* pKey, const char* defaultValue)
 {
-    JniMethodInfo t;
-    std::string ret("");
+    JNIEnv *env;
+    JavaVM *vm = JniHelper::getJavaVM();
+    int getEnvStat = vm->GetEnv((void**)&env, JNI_VERSION_1_4);
+    if (getEnvStat == JNI_EDETACHED) {
+        if(vm->AttachCurrentThread(&env, NULL) != 0) {
+            LOGD("cocos2d getStringForKeyJNI cannot attach");
+        }
+    }
 
-    if (JniHelper::getStaticMethodInfo(t, CLASS_NAME, "getStringForKey", "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;")) {
-        jstring stringArg1 = t.env->NewStringUTF(pKey);
-        jstring stringArg2 = t.env->NewStringUTF(defaultValue);
-        jstring str = (jstring)t.env->CallStaticObjectMethod(t.classID, t.methodID, stringArg1, stringArg2);
-        ret = JniHelper::jstring2string(str);
+    jstring jstringKey = env->NewStringUTF(pKey);
+    jstring jstringDefaultValue = env->NewStringUTF(defaultValue);
+    jstring result = (jstring) env->CallStaticObjectMethod(JniHelper::getCocos2dxHelperClass(), JniHelper::getJGetStringForKeyMethodID(), jstringKey, jstringDefaultValue);
+    if (result) {
+        jboolean isCopy;
+        std::string ret(env->GetStringUTFChars(result, &isCopy));
         
-        t.env->DeleteLocalRef(t.classID);
-        t.env->DeleteLocalRef(stringArg1);
-        t.env->DeleteLocalRef(stringArg2);
-        t.env->DeleteLocalRef(str);
-        
+        env->DeleteLocalRef(jstringKey);
+        env->DeleteLocalRef(jstringDefaultValue);
+        env->DeleteLocalRef(result);
+        if (getEnvStat == JNI_EDETACHED) {
+            vm->DetachCurrentThread();
+        }
         return ret;
     }
-    
-    return defaultValue;
+
+    std::string ret("");
+    env->DeleteLocalRef(jstringKey);
+    env->DeleteLocalRef(jstringDefaultValue);
+    if (getEnvStat == JNI_EDETACHED) {
+        vm->DetachCurrentThread();
+    }
+
+    return ret;
 }
 
 void setBoolForKeyJNI(const char* pKey, bool value)
@@ -325,15 +340,22 @@ void setDoubleForKeyJNI(const char* pKey, double value)
 
 void setStringForKeyJNI(const char* pKey, const char* value)
 {
-    JniMethodInfo t;
-    
-    if (JniHelper::getStaticMethodInfo(t, CLASS_NAME, "setStringForKey", "(Ljava/lang/String;Ljava/lang/String;)V")) {
-        jstring stringArg1 = t.env->NewStringUTF(pKey);
-        jstring stringArg2 = t.env->NewStringUTF(value);
-        t.env->CallStaticVoidMethod(t.classID, t.methodID, stringArg1, stringArg2);
-        
-        t.env->DeleteLocalRef(t.classID);
-        t.env->DeleteLocalRef(stringArg1);
-        t.env->DeleteLocalRef(stringArg2);
+    JNIEnv *env;
+    JavaVM *vm = JniHelper::getJavaVM();
+    int getEnvStat = vm->GetEnv((void**)&env, JNI_VERSION_1_4);
+    if (getEnvStat == JNI_EDETACHED) {
+        if(vm->AttachCurrentThread(&env, NULL) != 0) {
+            LOGD("cocos2d setStringForKeyJNI cannot attach");
+        }
+    }
+
+    jstring jstringKey = env->NewStringUTF(pKey);
+    jstring jstringValue = env->NewStringUTF(value);
+    env->CallStaticVoidMethod(JniHelper::getCocos2dxHelperClass(), JniHelper::getJSetStringForKeyMethodID(), jstringKey, jstringValue);
+
+    env->DeleteLocalRef(jstringKey);
+    env->DeleteLocalRef(jstringValue);
+    if (getEnvStat == JNI_EDETACHED) {
+        vm->DetachCurrentThread();
     }
 }

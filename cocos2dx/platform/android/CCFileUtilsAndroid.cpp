@@ -180,19 +180,19 @@ string CCFileUtilsAndroid::getWritablePath()
     return "/data/data/com.ebytee.slotstravaganza/files";
     // Fix for Nexus 10 (Android 4.2 multi-user environment)
     // the path is retrieved through Java Context.getCacheDir() method
-    string dir("");
-    string tmp = getFileDirectoryJNI();
+    // string dir("");
+    // string tmp = getFileDirectoryJNI();
 
-    if (tmp.length() > 0)
-    {
-        dir.append(tmp).append("/");
+    // if (tmp.length() > 0)
+    // {
+    //     dir.append(tmp).append("/");
 
-        return dir;
-    }
-    else
-    {
-        return "";
-    }
+    //     return dir;
+    // }
+    // else
+    // {
+    //     return "";
+    // }
 }
 
 NS_CC_END

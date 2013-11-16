@@ -46,6 +46,9 @@ public:
     static bool getStaticMethodInfo(JniMethodInfo &methodinfo, const char *className, const char *methodName, const char *paramCode);
     static bool getMethodInfo(JniMethodInfo &methodinfo, const char *className, const char *methodName, const char *paramCode);
     static std::string jstring2string(jstring str);
+    static jclass getCocos2dxHelperClass();
+    static jmethodID getJGetStringForKeyMethodID();
+    static jmethodID getJSetStringForKeyMethodID();
 
 private:
     static JavaVM *m_psJavaVM;
