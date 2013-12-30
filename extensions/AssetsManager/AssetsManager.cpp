@@ -36,6 +36,10 @@
 #include <errno.h>
 #endif
 
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+#include "iOSAssetsManagerHelper-C.h"
+#endif
+
 #include "support/zip_support/unzip.h"
 
 using namespace cocos2d;
@@ -303,10 +307,15 @@ bool AssetsManager::uncompress()
             } while(error > 0);
             
             fclose(out);
+            
         }
         
         unzCloseCurrentFile(zipfile);
-        
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+        iosAddSkipBackupAttributeToItemAtURL(fullPath.c_str());
+#endif
+
         // Goto next entry listed in the zip file.
         if ((i+1) < global_info.number_entry)
         {
